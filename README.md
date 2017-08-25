@@ -12,3 +12,5 @@
 
 ![hanoi_3](/images/170718_hanoi_3.png)
 <img src="/images/170718_hanoi_3.png" alt="Drawing" style="width: 50px;"/>
+
+<img src="/images/170718_hanoi_3.png" width="50" height="70" />
