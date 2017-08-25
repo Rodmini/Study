@@ -8,4 +8,6 @@
       - xx
       - xx2
       - xx3
-![hanoi_3](/images/170718_hanoi_3.png =250x)
+
+      
+![hanoi_3](/images/170718_hanoi_3.png)
