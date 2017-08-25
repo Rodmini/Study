@@ -9,5 +9,6 @@
       - xx2
       - xx3
 
-      
+
 ![hanoi_3](/images/170718_hanoi_3.png)
+<img src="/images/170718_hanoi_3.png" alt="Drawing" style="width: 200px;"/>
