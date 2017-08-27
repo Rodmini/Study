@@ -14,3 +14,6 @@
 <img src="/images/170718_hanoi_3.png" alt="Drawing" style="width: 50px;"/>
 
 <img src="/images/170718_hanoi_3.png" width="100px" height="100px" />
+
+
+<img src="/images/170718_hanoi_3.png" width="700" height="400" />
