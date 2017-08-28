@@ -4,4 +4,4 @@
 <img src="/images/170718_hanoi_3.png" width="100px" height="100px" />
 
 
-<img src="/images/170718_hanoi_3.png" width="400" height="200" />
+<img src="/images/170718_hanoi_3.png" width="400" height="300" />
