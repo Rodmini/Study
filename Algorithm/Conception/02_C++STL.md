@@ -302,4 +302,18 @@
     return 0;
   }
 ```
-### STL의 컨테이너 2. tuple
+### STL의 컨테이너 2. tuple (C++11)
+- pair와 같지만 여러 개를 묶을 수 있다.
+- get을 이용해 인덱스로 접근
+- `#include <tuple>`에 정의되어 있다.
+```c++
+  tuple<int, int, int> t = make_tuple(1, 2, 3);
+  cout << get<0>(t) << '\n';
+  cout << get<1>(t) << '\n';
+  cout << get<2>(t) << '\n';
+
+  // cout << get<i>(t1) << '\n';
+```
+  + tuple을 사용할 때는 get함수 안에 변수를 넣을 수 없다.
+
+### STL의 컨테이너 3. tie
