@@ -317,3 +317,140 @@
   + tuple을 사용할 때는 get함수 안에 변수를 넣을 수 없다.
 
 ### STL의 컨테이너 3. tie
+- tie를 이용하면 swap을 한 줄로 간단하게 표현할 수 있다.
+```c++
+  auto t = make_tuple(10, 20, 30);
+
+  int x = get<0>(t);
+  int y = get<1>(t);
+  int z = get<2>(t);      // get함수 인자로 변수 전달이 불가능하므로 일일이 해야 하는 불편함
+
+  tie(x, y, z) = t;     // 이렇게 하면 편하게 한 줄에 쭈루룩 입력 가능
+  tie(x, y, ignore) = t;    // 30은 무시하게 된다.
+
+  tie(b, a) = make_pair(a, b);  // 이렇게 swap을 간단히 구현 가능
+```
+
+### STL의 컨테이너 4. vector
+- 배열인데 길이를 편하게 조절 가능하다!
+```c++
+  #include <iostream>
+  using namespace std;
+
+  int main() {
+    vector<int> v1;         // 길이가 0
+    vector<int> v2(10);     // 길이가 10인 벡터 ==> int v2[10];
+    vector<int> v3(15, 1);  // 1로 초기화한 길이가 15인 벡터
+    vector<int> v4 = {1, 2, 3, 4, 5};   // 초기화 리스트를 이용
+
+    vector<pair<int, int>> v5;
+    vector<pair<int, int>> v6 = {{1, 2}, {3, 4}};
+    vector<vector<int>> v7;
+
+    int n = 10, m = 20;
+    vector<vector<int>> v8(n, vector<int>(m));      // int v8[n][m];
+
+    vector<int> a = {1, 2, 3, 4, 5};
+    a.push_back(6); // [1,2,3,4,5,6]
+    a.pop_back();   // [1,2,3,4,5]
+    a.clear();      // []
+    a.resize(5);    // [0,0,0,0,0]
+    a.clear();
+
+    a.push_back(1);
+    a.push_back(2);   // [1,2]
+    a.resize(5);      // [1,2,0,0,0]      // 0으로 추가 채워짐
+    a.resize(3);      // [1,2,0]        // 뒷 부분 잘라버림
+    a.size();         // 3
+    a.empty();        // false ==> 3이 들어있으므로
+
+    vector<int> b = {1, 2, 3};
+    cout << b.front();    // 1
+    cout << b[1];         // 2
+    cout << b.back();     // 3
+
+    vector<int> a = {1, 2, 3, 4, 5};
+    for (int i=0; i<a.size(); i++) {
+      cout << a[i] << ' ';
+    }
+    for (int &x : a) {
+      cout << x << ' ';
+    }
+
+    return 0;
+  }
+```
+#### vector의 iterator
+- iterator는 포인터라고 생각하면 편하다. 벡터의 처음부터 끝까지 순회하면서 접근할 때 용이
+```javascript
+  vector<int> a = {1,2,3,4,5};
+  for (vector<int>::iterator it = a.begin(); it != a.end(); ++it) { // end()는 마지막 값의 뒤를 나타냄!
+      cout << *it << '\n';
+  }
+  for (auto it = a.begin(); it != a.end(); ++it) {
+    cout << "a[" << (it - a.begin()) << "] = " << *it << '\n';
+  }
+}
+```
+- vector에 pair나 tuple이 들어있는 경우 `emplace_back` 사용 가능
+```javascript
+  vector<pair<int,int>> a;
+  a.emplace_back(1,2);
+  a.push_back(make_pair(3,4));
+  a.push_back({5, 6});
+
+  for (auto &x : a) {
+    cout << x.first << ' ' << x.second << '\n';
+  }
+
+  for (auto it = a.begin(); it != a.end(); ++it) {
+    cout << it->first << ' ' << it->second << '\n';   // (*it).first 와 동일
+  }
+```
+```javascript
+  void print(vector<int> &a) {
+    for (int x: a) {
+      cout << x << '\n';
+    }
+    cout << '\n';
+  }
+
+  int main() {
+    vector<int> a = {1,2,3};
+    print(a);
+
+    auto it = a.begin();
+    a.insert(it, 4);  // 맨 앞에 4를 삽입
+    print(a);         // 4, 1, 2, 3
+
+    it = a.begin() + 1;
+    a.insert(it, 5, 0);     // 5개의 길이만큼 0의 값을 추가
+    print(a);           // 4,0,0,0,0,0,1,2,3
+
+    it = a.begin() + 2;
+    vector<int> b = {10, 20, 30};
+    a.insert(it, b.begin(), b.end());   // b의 처음부터 끝까지의 값들을 삽입
+    print(a);       // 4,0,10,20,30,0,0,0,0,1,2,3
+
+    return 0;
+  }
+```
+- 벡터도 배열이므로 insert하게 되면 `O(N)`만큼의 시간 소요. 추가 위치 뒤의 값들을 밀어내므로
+- 값을 지우는 `erase` 함수. insert와 마찬가지로 `O(N)`소요. 제거 후 뒤의 값들을 앞으로 당기므로
+```javascript
+  vector<int> a = {1,2,3,4,5};
+  a.erase(a.begin() + 2);   // 3이 삭제됨  ==> 1,2,4,5
+
+  a.erase(a.begin()+1, a.begin()+3); // 1번지 이상 부터 3번지 미만의 값들을 제거 ==> 1,5
+```
+### STL의 컨테이너 5. Deque
+- queue가 양쪽으로 붙어있는 경우. 양쪽에서 모두 `push`, `pop`이 가능하다.
+```c++
+  deque<int> d;
+
+  d.push_back(1);         // 1
+  d.push_front(2);        // 2 1
+  d.push_back(3);         // 2 1 3
+  d.pop_back();           // 2 1
+  d.pop_front();          // 1
+```
