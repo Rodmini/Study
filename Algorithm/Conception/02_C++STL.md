@@ -454,3 +454,138 @@
   d.pop_back();           // 2 1
   d.pop_front();          // 1
 ```
+
+### STL의 컨테이너 6. list
+- 이중 연결 리스트. 삽입과 삭제가 `O(1)`로 매우 효율적
+```c++
+  list<int> l = {2, 1, -5, 4, -3, 6, -7};
+  l.sort(); print(l);   // -7, -5, -3, 1, 2, 4, 6
+  l.sort(greater<int>()); print(l);   // 6,4,2,1,-3,-5,-7 내림차순 정렬
+  l.sort([](int &u, int &v) {
+    return abs(u) < abs(v);       // 1,2,-3,4,-5,6,-7
+  }); print(l);      
+  l.reverse(); print(l);            // -7,6,-5,4,-3,2,1
+```
+
+### STL의 컨테이너 7. set
+- set과 map은 vector, deque, list와 달리 순서가 없다.
+- Red Black Tree로 구현되어 있음
+- **중복을 허용하지 않으므로** 집합을 나타낼 때 유용하다.
+- 내부에서 기본 오름차순으로 정렬되어 있다.
+```c++
+  set<int> s1;
+  set<int> s2 = {1,2,3,4,5};
+  set<int> s3 = {1,1,1,1,1,2,2,2,2,2,3,3,3,3,3};
+
+  cout << s1.size() << '\n';      // 0
+  cout << s2.size() << '\n';      // 5
+  cout << s3.size() << '\n';      // 3
+
+  set<int, greater<int>> s4;  // 내림차순으로 기본 정렬하고 싶을 때
+```
+- **insert 함수는 return값이 존재한다. 값이 저장된 위치와 중복을 피해 저장 성공 여부를 반환**
+```c++
+  s1.insert(2);   s1.insert(1);   s1.insert(3);   // 1 2 3
+
+  pair<set<int>::iterator, bool> result = s1.insert(4);
+  cout << "result iterator: " << *result.first << '\n';   // 4
+  cout << "result bool: " << result.second << '\n';     // 1 true. 값을 정상적으로 넣었다!
+
+  auto result2 = s1.insert(3);
+  cout << "result iterator: " << *result2.first << '\n';  // 3
+  cout << "result bool: " << result2.second << '\n';    // 0 false. 이미 값이 있으므로 중복 불허
+```
+- set은 Binary Search Tree이므로 삽입, 삭제가 `O(lgN)` 걸림
+- set은 vector나 deque처럼 순서를 저장하지 않으므로, []를 통한 접근이 불가능 ==> iterator를 통해야함
+- **find함수** : set에 값이 있는지 없는지 체크
+  ```javascript
+    void print(set<int> &a, set<int>::iterator i) {
+      if (i == a.end()) {
+        cout << "end\n";
+      } else {
+        cout << *i << '\n';
+      }
+    }
+    int main() {
+      set<int> s = {7, 5, 3, 1};
+      auto it = s.find(1);    // O(lgN). find의 반환형은 iterator임
+      print(s, it);         // 1
+
+      it = s.find(2);
+      print(s, it);         // end
+
+      it = s.find(3);
+      print(s, it);         // 3
+
+      it = s.find(4);
+      print(s, it);         // end
+    }
+  ```
+- set에는 중복된 값이 허용되지 않으므로 값이 있는지 없는지를 체크하려면 find보다 count가 더 효율적이다.
+  ```c++
+    set<int> s = {1, 7, 5, 3};
+    for (int i = 1; i <= 9; i++) {
+      cout << "s.count(" << i << "): " << s.count(i) << '\n';
+    }
+    /*
+        s.count(1): 1
+        s.count(2): 0
+        s.count(3): 1
+        s.count(4): 0
+        s.count(5): 1
+        s.count(6): 0
+        s.count(7): 1
+        s.count(8): 0
+        s.count(9): 0
+    */
+  ```
+- **multiset** 은 같은 수를 여러개 저장가능!!!!! 와우 !
+
+### STL의 컨테이너 8. map
+- key와 value로 이루어져 있다. set과 달리 배열처럼 []로 접근가능! 심지어 정수가 아니어도 됨!
+- map은 배열과 달리 만약 크기가 10일 경우 arr[9]로 접근하지 않아도 되는 큰큰큰 장점이 있다!
+```c++
+  map<int, int> d1;     // key의 자료형, value의 자료형을 각각 나타낸다.
+  map<int, int> d2 = {{1, 2}, {3, 4}, {5, 6}}; // d2[1] = 2, d2[3] = 4로 접근가능 와우
+
+  cout << d1.size();  // 0
+  cout << d2.size();  // 3
+
+  d1[10] = 20; // 이렇게 만들어서 저장하는 것도 가능!
+
+```
+- map은 key를 찾아서 value를 반환하므로 배열에서의 접근 `O(1)`과 달리 `O(lgN)`시간 걸린다.
+#### map 사용시 주의할 점!!!!!
+- **map은 배열[]로 접근하는 순간, 값이 없는 경우 만들어버린다!**
+```c++
+  map<int, int> d1;
+  map<int, int> d2;
+  for (int i = 1; i <= 9; i+=2) {
+    d1[i] = i*i;
+    d2[i] = i*i;
+  }
+
+  for (int i = 1; i <= 10; i++) {
+    if (d1[i] == 0) {   // 이런식으로 접근해버리는 순간 만들어버림 !
+      cout << i << '\n';
+    }
+  }
+
+  for (int i = 1; i <= 9; i+=2) {
+    if (d1.count(i)) {  // count를 이용해 확인해주어야 한다.
+      cout << i << '\n';
+    }
+  }
+  cout << d1.size() << '\n';  // 10
+  cout << d2.size() << '\n';  // 5
+```
+- map은 pair처럼 접근 가능하다.
+```javascript
+  map<int, int> d = {{1, 2}, {3, 4}, {5, 6}};
+  for (auto it = d.begin(); it != d.end(); ++it) {
+    cout << it->first << ' ' << it->second << '\n';
+  }
+  for (auto p : d) {
+    cout << p.first << ' ' << p.second << '\n';
+  }
+```
