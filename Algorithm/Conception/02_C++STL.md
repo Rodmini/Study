@@ -589,3 +589,138 @@
     cout << p.first << ' ' << p.second << '\n';
   }
 ```
+
+### STL의 컨테이너 9. stack
+- 내부는 deque으로 기본적으로 구현되어 있는데, list가 필요하면 변경도 가능
+```c++
+  stack<int> s1;
+  stack<int, list<int>> s2;
+  deque<int> d = {1,2,3,4,5};
+  stack<int> s3(d);
+
+  for (int i = 1; i <= 5; i++) {
+    s1.push(i);
+  }
+  s1.top();   // 스택의 젤 꼭대기 값 확인 가능
+  s1.pop();   // 스택의 마지막 입력 값 삭제
+  s1.empty(); // 스택이 비어있는지 확인
+  s1.size();  // 스택의 사이즈
+```
+- stack도 vector처럼 emplace_back이 가능한데 벡터와는 달리 emplace만 쓰면 된다.
+```c++
+  stack<pair<int, int>> s;
+  s.push(make_pair(1,2));
+  s.push({3, 4});
+  s.emplace(5, 6);
+
+  while (!s.empty()) {
+    auto p = s.top();
+    cout << p.first << ' ' << p.second << '\n';
+    s.pop();
+  }
+```
+
+### STL의 컨테이너 10. queue
+- queue도 stack과 동일하지만 앞과 뒤에서 접근가능
+```c++
+  queue<int> q;
+  for(int i = 1; i <= 5; i++) {
+    q.push(i);
+  }
+  cout << q.front() << ',' << q.back() << '\n'; // 1 5
+  q.pop();    // queue는 앞 부터 빠지므로
+  cout << q.front() << ',' << q.back() << '\n'; // 2 5
+
+  queue<pair<int, int>> q1;
+  q1.push({1, 2});
+  q1.push(make_pair(3, 4));
+  q1.emplace(5, 6);
+
+  while (!q1.empty()) {
+    auto p = q1.front();
+    cout << p.first << ' ' << p.second << '\n';
+    q1.pop();
+  }
+```
+
+### STL의 컨테이너 11. priority queue 최대힙
+- queue와 동일하게 동작하지만 우선순위를 정해서 저장함.
+```c++
+  vector<int> a = {5, 2, 4, 1, 3};
+  priority_queue<int> pq;
+  for (int x: a) {
+    pq.push(x);
+  }
+  while (!pq.empty()) {
+    cout << pq.top();     // 5 4 3 2 1
+    pq.pop();
+  }
+```
+- **최대힙을 최소힙으로 간단하게 바꾸고 싶은 경우, push할때 -붙이고, print할때 -붙이면 된다.**
+  + 단, 여기서 수의 범위에 벗어나지 않도록 조심!! ex.int의 경우 -2^31
+- 올바르게 바꾸려는 경우
+```c++
+  vector<int> a = {5, 2, 4, 1, 3};
+
+  // 자료형을 int로, 내부 컨테이너를 vector로, 내림차순으로 ! (list에서는 sort greater하면 올림차순되는디..)
+  priority_queue<int, vector<int>, greater<int>> q;
+
+  for (int x : a) {
+    q.push(x);
+  }
+
+  while (!q.empty()) {
+    cout << q.front();
+    q.pop();
+  }
+```
+
+### STL의 컨테이너 12. bitset
+- vector<bool> 같은 형태라고 생각하면 된다.
+- bool은 true와 false만 저장하지만 실제로는 1바이트 필요
+- and, or등 비트연산이 가능하다는 장점이 있다.
+```c++
+  bitset<8> b1; // 0 0 0 0 0 0 0 0
+  bitset<10> b2(88);  // 0 0 0 1 0 1 1 0 0 0
+  bitset<8> b3("10110"); // 0 0 0 1 0 1 1 0
+
+  for (int i = 0; i < b2.size(); i++) {
+    cout << i << ": " << b2[i] << '\n';
+  }
+
+  bitset<10> b(88); // 0 0 0 1 0 1 1 0 0 0
+  cout << b << '\n';  // 0001011000
+
+  cout << b.test(4) << '\n';  // 1  // b[4]와 동일
+  cout << b.test(5) << '\n';  // 0
+
+  b.set(0);   // 0번지 값을 무조건 1로 변경. 0001011001
+  b.reset(3); // 3번지 값을 0으로 리셋. 0001010001
+  b.flip(2);  // 2번지 값을 0->1 , 1->0으로 변경. 0001010101
+
+  bitset<10> b5(88); // 0 0 0 1 0 1 1 0 0 0
+  cout << b5 << '\n';  // 0001011000
+
+  b.set();   // 싹다 1로 변경
+  b.reset(); // 싹다 0으로 변경
+  b.flip();  // 싹다 1->0, 0->1로 변경
+
+  cout << b.all() << '\n';  // 모든 비트가 1인지 t/f로 반환
+  cout << b.any() << '\n';  // 비트가 1인 것이 하나라도 있는지 t/f로 반환
+  cout << b.none() << '\n'; // 모든 비트가 0인지 t/f로 반환
+  cout << b.count() << '\n';  // 비트가 1인 값의 갯수 반환
+```
+- bitset의 비트연산
+```c++
+  bitset<10> b1(88);  // 0 0 0 1 0 1 1 0 0 0
+  bitset<10> b2(47);  // 0 0 0 0 1 0 1 1 1 1
+
+  cout << (b1 & b2) << '\n';  // 0 0 0 0 0 0 1 0 0 0
+  cout << (b1 | b2) << '\n';  // 0 0 0 1 1 1 1 1 1 1
+  cout << (b1 ^ b2) << '\n';  // 0 0 0 1 1 1 0 1 1 1
+  cout << ~(b1) << '\n';      // 1 1 1 0 1 0 0 1 1 1
+
+  cout << (b1 << 2) << '\n';  // 0 1 0 1 1 0 0 0 0 0
+  cout << (b2 >> 2) << '\n';  // 0 0 0 0 0 0 1 0 1 1
+```
+- **bitset은 크기 값을 변수로 지정할 수 없다!!!!!!**
