@@ -10,3 +10,23 @@
     printf("%c", c);
   }
 ```
+
+#### string을 표준 입출력처럼 사용
+```c++
+  #include <sstream>
+
+  string s;
+  string line;
+  while (cin >> line) {
+      s += line;
+  }
+
+  istringstream sin(s);
+
+  string number;
+  int sum = 0;
+
+  while (getline(sin, number, ',')) {
+      sum += stoi(number);
+  }
+```
