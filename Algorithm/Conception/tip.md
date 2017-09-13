@@ -32,3 +32,7 @@
 ```
 
 #### memset은 0,-1로 초기화 할 때만 정상동작함. 다른 값에 대해서도 안정하게 초기화하려면 fill쓰기!
+
+#### pow(2,K) 함수의 반환형은 long double이므로 정수형으로 표기할 경우
+- `#include <iomanip>`
+- `cout << fixed << setprecision(0) << pow(2,k) << '\n';` 꼭 해주어야 한다.
