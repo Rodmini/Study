@@ -252,12 +252,167 @@
                 }
             }
             if (ok == false) continue;      // 문자열 조각이 일치하지 않을 경우
-            if (d[i] == -1 || d[i] > d[i-len] + 1) {  // 기존에 저장된 d[i]값보다 최소값이 발생할 경우 그 값으로 대체 
+            if (d[i] == -1 || d[i] > d[i-len] + 1) {  // 기존에 저장된 d[i]값보다 최소값이 발생할 경우 그 값으로 대체
                 d[i] = d[i-len] + 1;
             }
         }
     }
 
   	return d[n];
+  }
+```
+
+
+### T4.
+```c++
+  #include <iostream>
+  #include <vector>
+  #include <string>
+  using namespace std;
+
+  string changeForm(pair<int,int> p) {
+      cout << "changeFo : " << p.first << ' ' << p.second << '\n';
+      int h = p.first;
+      int m = p.second;
+      string s = "";
+      if (h < 10 && h > 0) {
+          s += '0';
+          s += to_string(h);
+      } else if (h == 0) {
+          s += "00";
+      } else {
+          s += to_string(h);
+      }
+      s += ":";
+
+      if (m < 10 && m > 0) {
+          s += '0';
+          s += to_string(m);
+      } else if (m == 0) {
+          s += "00";
+      } else {
+          s += to_string(m);
+      }
+      cout << "changeFo1 : " << s << '\n';
+      return s;
+  }
+
+  int main() {
+      int n = 10;  // 셔틀운행 횟수
+      int t = 60;  // 셔틀운행 간격
+      int m = 45;  // 한 셔틀 최대 크루수
+      vector<string> timetable = {"23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59"};
+
+      vector<pair<int,int>> bus;
+      vector<int> people;
+      vector<pair<int,int>> timet;
+
+      string answer = "";
+
+      for (string s : timetable) {
+          string sh, sm;
+          bool pos = true;
+          for (int i = 0; i < s.length(); i++) {
+              if (s[i] >= '0' && s[i] <= '9') {
+                  if (pos) {
+                      sh += s[i];
+                  } else {
+                      sm += s[i];
+                  }
+              } else if (s[i] == ':') {
+                  pos = false;
+              }
+          }
+          timet.push_back(make_pair(stoi(sh), stoi(sm)));
+
+      }
+
+      sort(timet.begin(), timet.end());
+
+      for (auto &p : timet) {
+          cout << p.first << ' '<<  p.second << '\n';
+      }
+
+      // 버스 도착시간 구현
+      int startH = 9, startM = 0;
+      for (int i = 1; i <= n; i++) {
+          bus.push_back(make_pair(startH, startM));
+          startM += t;
+          if (startM >= 60) {
+              startH++;
+              startM = 0;
+          }
+      }
+      people.resize(bus.size());
+
+      if (timet.size() < m) {
+          answer = changeForm(bus.back());
+      } else {
+
+          for (auto &p : timet) {
+              for (int k = 0; k < bus.size(); k++) {
+                  if (k != bus.size()) {
+                      if (p.first < bus[k].first) {
+                          if (people[k] >= m) {
+                              continue;   // 정원초과
+                          } else {
+                              people[k]++;
+                              break;
+                          }
+                      } else if (p.first == bus[k].first) {
+                          if (p.second <= bus[k].second) {
+                              if (people[k] >= m) {
+                                  continue;
+                              } else {
+                                  people[k]++;
+                                  break;
+                              }
+                          } else {
+                              continue;
+                          }
+                      } else {
+                          continue;
+                      }
+                  } else {
+                      // 버스에 못탐
+                      cout << "버스에 못탐" << '\n';
+                  }
+              }
+
+
+          }
+
+          cout << "헤헷"<<'\n';
+          for (auto i : bus) {
+              cout << i.first << ' ' << i.second << '\n';
+          }
+          for (auto d : people) {
+              cout << d << ' ';
+          }
+          cout << 'f' << '\n';
+          cout << people.back() << '\n';
+          string person;
+          if (people.back() == m) {
+              cout << timet.back().first << ' '<< timet.back().second << '-';
+              int tempH = timet.back().first, tempM = timet.back().second;
+              if (timet.back().second == 0) {
+                  tempM = 59;
+                  tempH--;
+              } else {
+                  tempM--;
+              }
+
+              person = changeForm({tempH, tempM});
+              cout << person << '\n';
+          } else {
+              person = changeForm(bus.back());
+              cout << "\n그냥 : " << person << '\n';
+          }
+          answer = person;
+
+      }
+
+      cout << "answer: " << answer << '\n';
+
   }
 ```
