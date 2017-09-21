@@ -261,7 +261,142 @@
   	return d[n];
   }
 ```
+### T1.
+```c++
+  #include <iostream>
+  #include <bitset>
+  #include <vector>
+  #include <string>
+  using namespace std;
 
+  vector<string> solution(int n, vector<int> arr1, vector<int> arr2) {
+    const int max = 65536;
+    vector <bitset<max>> ans;
+    vector <string> answer;
+    for (int i = 0; i < n; i++) {
+        ans.push_back(arr1[i] | arr2[i]);
+    }
+
+    for (int i = 0; i < n; i++) {
+        string s = "";
+        for (int j = n-1; j >= 0; j--) {
+            if (ans[i][j] == 1) {
+                s += "#";
+            } else {
+                s += " ";
+            }
+        }
+        answer.push_back(s);
+    }
+    for (int i = 0; i < n; i++) {
+        cout << answer[i] << '\n';
+    }
+    return answer;
+  }
+```
+
+### T2.
+```javascript
+  #include <string>
+  #include <vector>
+  using namespace std;
+
+  int solution(string s) {
+    int answer = 0;
+    vector<int> temp;
+    int index = 0;
+
+    for (int i = 0; i < s.length(); i++) {
+        if(s[i] >= '0' && s[i] <= '9') {
+            if (s[i] == '0' && s[i-1] == '1') {
+                temp[index] *= 10;
+            } else {
+                temp.push_back(s[i]-'0');
+                index = (int)temp.size() - 1;   // 0 1 2
+            }
+        } else if (s[i] == 'S') {
+            continue;
+        } else if (s[i] == 'D') {
+            temp[index] *= temp[index];
+        } else if (s[i] == 'T') {
+            temp[index] = temp[index] * temp[index] * temp[index];
+        } else if (s[i] == '#') {
+            temp[index] = -(temp[index]);
+        } else if (s[i] == '*') {
+            if (index == 0) {
+                temp[index] *= 2;
+            } else {
+                temp[index] *= 2;
+                temp[index-1] *= 2;
+            }
+        }
+    }
+    for (int x : temp) {
+        answer += x;
+    }
+
+    return answer;
+  }
+```
+
+### T3.
+```c++
+  #include <vector>
+  #include <string>
+  #include <algorithm>
+  #include <string.h>
+  using namespace std;
+
+  int solution(int size, vector<string> input) {
+    int answer = 0;
+    vector<string> v;
+    vector<string> c(size);
+    vector<int> lru(size, 0);
+
+    for (string from : input) {
+        string str = "";
+        for (int i = 0; i < from.length(); i++) {
+            from[i] = toupper(from[i]);
+            str += from[i];
+        }
+        v.push_back(str);
+    }
+
+    if (size == 0) {
+        answer = (int)v.size() * 5;
+    } else {
+        int index = 0;
+        int add = 1;
+        for (string s : v) {
+            auto it = find(c.begin(), c.end(), s);
+            if (it != c.end()) {
+                answer++;
+                lru[it-c.begin()] = add++;
+                add++;
+            } else {
+                if (index == size) {
+                    int min = add + 10;
+                    int min_index = 0;
+                    for (int i = 0; i < size; i++) {
+                        if (min >= lru[i]) {
+                            min = lru[i];
+                            min_index = i;
+                        }
+                    }
+                    swap(c[min_index], s);
+                    lru[min_index] = add++;
+                } else {
+                    c[index] = s;
+                    lru[index] = add++;
+                    index++;
+                }
+                answer += 5;
+            }
+        }
+    }
+    return answer;
+  }
+```
 
 ### T4.
 ```c++
