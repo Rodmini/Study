@@ -284,3 +284,229 @@
   }
 
 ```
+
+
+### +5
+```c++
+  #include <iostream>
+  #include <queue>
+  #include <vector>
+  #include <algorithm>
+  using namespace std;
+
+  struct Person {
+      string gender;
+      int age;
+      string etc;
+  };
+
+  int main() {
+      vector<int> type;
+      for (int i = 1; i <= 3; i++) {
+          int num;
+          cin >> num;
+          type.push_back(num);
+      }
+
+      int ppNum;
+      cin >> ppNum;   // 사람수
+      vector<Person> p;
+
+      for (int i = 0; i <= ppNum; i++) {
+          string in;
+          getline(cin , in);
+          vector<string> v;
+          string temp = "";
+          for (int j = 0; j < in.length(); j++) {
+              if (in[j] == ' ') {
+                  v.push_back(temp);
+                  temp = "";
+              } else {
+                  temp += in[j];
+              }
+          }
+          if (temp != "") {
+              v.push_back(temp);
+              temp = "";
+          }
+
+          if (v.size() > 2) {
+              p.push_back({v[0], stoi(v[1]), v[2]});
+          } else if (v.size() > 0) {
+  //            cout << v.size() << '\n';
+              p.push_back({v[0], stoi(v[1]), ""});
+          }
+      }
+  //    for (Person pw : p) {
+  //        cout << "+" << '\n';
+  //        cout << pw.gender << pw.age << pw.etc << '\n';
+  //    }
+
+      int prior = type[0];
+      int prior2 = 0;
+      if (prior == 1) {   // 성별순
+          sort(p.begin(), p.end(), [&](Person &u , Person &v){
+              if (u.gender == v.gender) {
+                  prior2 = type[1];
+                  if (prior2 == 2) {
+                      if (u.age <= 7 && v.age <= 7) {
+                          if (u.age == v.age) {
+                              if (u.etc.size() == v.etc.size()) {
+                                  return u.etc[0] > v.etc[0];
+                              } else {
+                                  return u.etc.size() > v.etc.size();
+                              }
+                          } else {
+                              return u.age < v.age;
+                          }
+                      } else if (u.age <= 7){
+                          return u.age < v.age;
+                      } else if (v.age <= 7) {
+                          return u.age > v.age;
+                      } else {
+                          if (u.age == v.age) {
+                              if (u.etc.size() == v.etc.size()) {
+                                  return u.etc[0] > v.etc[0];
+                              } else {
+                                  return u.etc.size() > v.etc.size();
+                              }
+                          } else {
+                              return u.age > v.age;
+                          }
+                      }
+                  } else if (prior2 == 3) {
+                      if (u.etc == v.etc) {
+                          if (u.age <= 7 && v.age <= 7) {
+                              return u.age < v.age;
+                          } else if (u.age <= 7){
+                              return u.age < v.age;
+                          } else if (v.age <= 7) {
+                              return u.age > v.age;
+                          } else {
+                              return u.age > v.age;
+                          }
+                      } else {
+                          if (u.etc.size() == v.etc.size()) {
+                              return u.etc[0] > v.etc[0];
+                          } else {
+                              return u.etc.size() > v.etc.size();
+                          }
+                      }
+                  }
+              }
+              return u.gender < v.gender;
+          });
+      } else if (prior == 2) {    // 나이순
+          sort(p.begin(), p.end(), [&](Person &u , Person &v){
+              if (u.age == v.age) {
+                  prior2 = type[1];
+                  if (prior2 == 1) {
+                      if (u.gender == v.gender) {
+                          if (u.etc.size() == v.etc.size()) {
+                              return u.etc[0] > v.etc[0];
+                          } else {
+                              return u.etc.size() > v.etc.size();
+                          }
+                      } else {
+                          return u.gender > v.gender;
+                      }
+                  } else if (prior2 == 3) {
+                      if (u.etc == v.etc) {
+                          return u.gender > v.gender;
+                      } else {
+                          if (u.etc.size() == v.etc.size()) {
+                              return u.etc[0] > v.etc[0];
+                          } else {
+                              return u.etc.size() > v.etc.size();
+                          }
+                      }
+                  }
+              } else {
+                  if (u.age <= 7 && v.age <= 7) {
+                      return u.age < v.age;
+                  } else if (u.age <= 7){
+                      return u.age < v.age;
+                  } else if (v.age <= 7) {
+                      return u.age > v.age;
+                  } else {
+                      return u.age > v.age;
+                  }
+              }
+              return u.age > v.age;
+          });
+      } else if (prior == 3) {    // 임산부
+          sort(p.begin(), p.end(), [&](Person &u , Person &v){
+              if (u.etc == v.etc) {
+                  prior2 = type[1];
+                  if (prior2 == 1) {
+                      if (u.gender == v.gender) {
+                          if (u.age <= 7 && v.age <= 7) {
+                              return u.age < v.age;
+                          } else if (u.age <= 7){
+                              return u.age < v.age;
+                          } else if (v.age <= 7) {
+                              return u.age > v.age;
+                          } else {
+                              return u.age > v.age;
+                          }
+                      } else {
+                          return u.gender > v.gender;
+                      }
+                  } else if (prior2 == 2) {
+                      if (u.age == v.age) {
+                          return u.gender > v.gender;
+                      } else {
+                          if (u.age <= 7 && v.age <= 7) {
+                              return u.age < v.age;
+                          } else if (u.age <= 7){
+                              return u.age < v.age;
+                          } else if (v.age <= 7) {
+                              return u.age > v.age;
+                          } else {
+                              return u.age > v.age;
+                          }
+                      }
+                  }
+              }
+              if (u.etc.size() == v.etc.size()) {
+                  return u.etc[0] > v.etc[0];
+              } else {
+                  return u.etc.size() > v.etc.size();
+              }
+          });
+      }
+
+      for (Person pw : p) {
+  //        cout << "+" << '\n';
+          cout << pw.gender << ' ' << pw.age;
+          if (pw.etc.length() > 0) {
+              cout << ' ' << pw.etc;
+          }
+          cout << '\n';
+      }
+
+
+      return 0;
+  }
+
+  //2 1 3
+  //5
+  //M 17
+  //F 60 P
+  //F 30 PW
+  //M 40 P
+  //M 3
+
+  //F60P
+  //M40P
+  //F30PW
+  //M17
+  //M3
+
+  //1 2 3
+  //2
+  //M 3 PW
+  //F 6
+
+
+```
